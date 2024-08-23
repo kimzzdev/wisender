@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path')
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, getAggregateVotesInPollMessage, proto } = require("@whiskeysockets/baileys")
 const pino = require('pino')
 const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
@@ -7,6 +8,8 @@ const { color, bgcolor } = require('./all/color')
 const { smsg , createReceipt } = require('./all/functions')
 const figlet = require('figlet')
 const { Boom } = require('@hapi/boom')
+
+const session = path.join(__dirname, 'session');
 
 
 let d = new Date
@@ -22,7 +25,7 @@ const app = express();
 app.use(bodyParser.json());
 
 async function connectToWhatsApp() {
-    const { state, saveCreds } = await useMultiFileAuthState("./session")
+    const { state, saveCreds } = await useMultiFileAuthState(session)
     let { version, isLatest } = await fetchLatestBaileysVersion()
     const kimzz = makeWASocket({
             logger: pino({ level: 'silent' }),
